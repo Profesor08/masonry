@@ -1,0 +1,34 @@
+{
+  "name": "@prof-dev/masonry",
+  "version": "1.0.0",
+  "description": "Masonry grid implementation",
+  "main": "lib/Masonry.js",
+  "types": "lib/Masonry.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "clean": "tsc --build --clean"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Profesor08/masonry.git"
+  },
+  "author": "Profesor08",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Profesor08/masonry/issues"
+  },
+  "homepage": "https://github.com/Profesor08/masonry#readme",
+  "devDependencies": {
+    "@types/lodash": "^4.14.172",
+    "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "@prof-dev/event-emitter": "^1.0.3",
+    "@prof-dev/media": "^1.0.0",
+    "lodash": "^4.17.21"
+  }
+}
