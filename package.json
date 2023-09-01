@@ -1,6 +1,6 @@
 {
   "name": "@prof-dev/masonry",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Masonry grid implementation",
   "main": "lib/Masonry.js",
   "types": "lib/Masonry.d.ts",
