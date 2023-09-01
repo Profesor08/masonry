@@ -1,5 +1,5 @@
 import { EventEmitter } from "@prof-dev/event-emitter";
-import { useMedia } from "@prof-dev/media";
+import { getMedia } from "@prof-dev/media";
 import debounce from "lodash/debounce";
 
 interface IMasonryOptions {
@@ -29,7 +29,7 @@ export class Masonry extends EventEmitter<"reflow", Masonry> {
     this.options = { ...options };
     this.mediaItemsList = this.options.breakpoints.map(
       ({ query, columns, gap }) => {
-        const media = useMedia(query);
+        const media = getMedia(query);
 
         media.addEventListener("change", this.reflow.flush);
 
@@ -38,7 +38,7 @@ export class Masonry extends EventEmitter<"reflow", Masonry> {
           columns,
           gap,
         };
-      },
+      }
     );
 
     this.resizeObserver = new ResizeObserver(this.reflow);
@@ -80,7 +80,7 @@ export class Masonry extends EventEmitter<"reflow", Masonry> {
 
                 children.style.setProperty(
                   `margin-top`,
-                  `${-(top - offset)}px`,
+                  `${-(top - offset)}px`
                 );
               }
 
@@ -97,7 +97,7 @@ export class Masonry extends EventEmitter<"reflow", Masonry> {
       leading: true,
       trailing: true,
       maxWait: 500,
-    },
+    }
   );
 
   static create(element: HTMLElement, options: IMasonryOptions) {

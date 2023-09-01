@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@prof-dev/event-emitter": "^1.0.3",
-    "@prof-dev/media": "^1.0.0",
+    "@prof-dev/media": "^1.1.1",
     "lodash": "^4.17.21"
   }
 }
