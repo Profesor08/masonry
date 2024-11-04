@@ -1,6 +1,12 @@
 # CSS Grid masonry polyfill
 
-This library helps to make masonry grid layout using css grid
+<a href="https://npmjs.com/package/@prof-dev/masonry"><img src="https://img.shields.io/npm/v/@prof-dev/masonry.svg" alt="npm package"></a>
+
+## Installation
+
+````bash
+npm i @prof-dev/masonry
+``
 
 ## Example
 
@@ -11,7 +17,7 @@ This library helps to make masonry grid layout using css grid
   align-items: start;
   gap: 12px;
 }
-```
+````
 
 ```ts
 const grid = document.querySelector(".masonry-grid");
