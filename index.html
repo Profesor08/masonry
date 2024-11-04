@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Masonry polyfill</title>
+  </head>
+  <body>
+    <div
+      class="app bg-gray-100 font-sans leading-normal tracking-normal text-gray-900"
+    >
+      <!-- Header -->
+      <header class="bg-blue-600 p-4 text-white">
+        <div
+          class="2xl:container 2xl:mx-auto flex justify-between items-center"
+        >
+          <h1 class="text-3xl font-bold">Masonry</h1>
+          <a
+            href="https://github.com/Profesor08"
+            target="_blank"
+            class="text-white hover:underline"
+          >
+            <svg
+              class="w-6 h-6 inline-block mr-2"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 2C6.477 2 2 6.477 2 12c0 4.419 2.868 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.699-2.782.605-3.369-1.342-3.369-1.342-.454-1.156-1.11-1.465-1.11-1.465-.908-.62.069-.607.069-.607 1.004.071 1.532 1.032 1.532 1.032.892 1.528 2.341 1.087 2.91.831.092-.646.35-1.087.635-1.338-2.22-.252-4.555-1.11-4.555-4.942 0-1.091.39-1.984 1.029-2.682-.103-.253-.447-1.273.098-2.654 0 0 .84-.269 2.75 1.025A9.564 9.564 0 0112 6.845c.851.004 1.706.115 2.506.337 1.908-1.294 2.747-1.025 2.747-1.025.547 1.381.203 2.401.1 2.654.64.698 1.027 1.591 1.027 2.682 0 3.842-2.338 4.687-4.566 4.935.36.31.682.921.682 1.855 0 1.338-.012 2.419-.012 2.747 0 .267.18.578.688.48A10.01 10.01 0 0022 12c0-5.523-4.477-10-10-10z"
+              />
+            </svg>
+            GitHub
+          </a>
+        </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="2xl:container 2xl:mx-auto mt-6 p-4">
+        <section class="mt-6">
+          <h2 class="text-2xl font-semibold mb-4">Grid</h2>
+          <div class="masonry-grid">
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">New York City</h2>
+              <p class="text-gray-700">
+                The bustling metropolis known for its iconic skyline, Broadway,
+                and vibrant culture.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Paris</h2>
+              <p class="text-gray-700">
+                The romantic city famous for its art, fashion, and the Eiffel
+                Tower.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Tokyo</h2>
+              <p class="text-gray-700">
+                A modern city blending traditional culture with cutting-edge
+                technology.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">London</h2>
+              <p class="text-gray-700">
+                A historic city known for landmarks like Big Ben and the Tower
+                of London.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Sydney</h2>
+              <p class="text-gray-700">
+                Famous for its Opera House, stunning harbor, and vibrant beach
+                life.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Dubai</h2>
+              <p class="text-gray-700">
+                A city known for luxury shopping, ultramodern architecture, and
+                a lively nightlife scene.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Rome</h2>
+              <p class="text-gray-700">
+                The historic capital of Italy, known for its ancient ruins and
+                Renaissance art.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Barcelona</h2>
+              <p class="text-gray-700">
+                Known for its art and architecture, including Gaudí's unique
+                structures.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">San Francisco</h2>
+              <p class="text-gray-700">
+                Famous for the Golden Gate Bridge, Alcatraz Island, and steep
+                streets.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Amsterdam</h2>
+              <p class="text-gray-700">
+                Renowned for its canals, artistic heritage, and cycling culture.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Berlin</h2>
+              <p class="text-gray-700">
+                A city rich in history, known for its art scene and modern
+                landmarks.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Beijing</h2>
+              <p class="text-gray-700">
+                China's capital, known for its ancient history and modern
+                architecture.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Bangkok</h2>
+              <p class="text-gray-700">
+                Thailand's vibrant capital known for its street life and
+                cultural landmarks.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Moscow</h2>
+              <p class="text-gray-700">
+                Russia's cosmopolitan capital, known for the Kremlin and Red
+                Square.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Rio de Janeiro</h2>
+              <p class="text-gray-700">
+                A vibrant city known for its Carnival, Christ the Redeemer, and
+                beaches.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Buenos Aires</h2>
+              <p class="text-gray-700">
+                Argentina's bustling capital, known for its European-style
+                architecture and tango.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Cairo</h2>
+              <p class="text-gray-700">
+                A sprawling city in Egypt, known for its ancient pyramids and
+                the Sphinx.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Cape Town</h2>
+              <p class="text-gray-700">
+                South Africa's coastal city, known for Table Mountain and its
+                harbor.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Hong Kong</h2>
+              <p class="text-gray-700">
+                A bustling metropolis known for its skyscraper-studded skyline.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Mumbai</h2>
+              <p class="text-gray-700">
+                India's financial powerhouse, known for Bollywood and its
+                vibrant culture.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Istanbul</h2>
+              <p class="text-gray-700">
+                A city that straddles Europe and Asia, known for its historic
+                sites and bustling markets.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Singapore</h2>
+              <p class="text-gray-700">
+                A global financial hub with a tropical climate and multicultural
+                population.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Vienna</h2>
+              <p class="text-gray-700">
+                Austria's capital, known for its artistic and intellectual
+                legacy.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Seoul</h2>
+              <p class="text-gray-700">
+                A bustling city where modern skyscrapers, high-tech subways, and
+                pop culture meet Buddhist temples, palaces, and street markets.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Lagos</h2>
+              <p class="text-gray-700">
+                Nigeria's sprawling city, known for its beach resorts,
+                boutiques, and nightlife.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Athens</h2>
+              <p class="text-gray-700">
+                The heart of Ancient Greece, renowned for its archaeological
+                sites and historic importance.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Jakarta</h2>
+              <p class="text-gray-700">
+                Indonesia's massive capital, known for its bustling streets and
+                diverse cultural heritage.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Bangkok</h2>
+              <p class="text-gray-700">
+                Thailand’s capital, renowned for its vibrant street life and
+                cultural landmarks.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Lisbon</h2>
+              <p class="text-gray-700">
+                Portugal’s hilly, coastal capital city, known for its cafe
+                culture and soulful Fado music.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Istanbul</h2>
+              <p class="text-gray-700">
+                A transcontinental city straddling Europe and Asia, famous for
+                its historic sites.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Toronto</h2>
+              <p class="text-gray-700">
+                A dynamic city in Canada, known for its towering skyline and
+                cultural diversity.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">Mexico City</h2>
+              <p class="text-gray-700">
+                A sprawling capital known for its Templo Mayor, vibrant culture,
+                and bustling nightlife.
+              </p>
+            </div>
+            <div class="bg-white shadow-md rounded p-4">
+              <h2 class="text-xl font-semibold mb-2">São Paulo</h2>
+              <p class="text-gray-700">
+                Brazil’s financial center, known for its cultural institutions
+                and vibrant nightlife.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="bg-gray-800 text-white p-4 mt-6">
+        <div class="2xl:container 2xl:mx-auto text-center">
+          <p>&copy; 2024 My Website. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,14 +1,11 @@
 {
   "name": "@prof-dev/masonry",
-  "version": "1.0.2",
-  "description": "Masonry grid implementation",
-  "main": "lib/Masonry.js",
-  "types": "lib/Masonry.d.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "clean": "tsc --build --clean"
-  },
+  "version": "2.0.0",
+  "author": "Profesor08",
+  "license": "ISC",
+  "type": "module",
+  "main": "lib/masonry/Masonry.js",
+  "types": "lib/masonry/Masonry.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -16,19 +13,24 @@
     "type": "git",
     "url": "git+https://github.com/Profesor08/masonry.git"
   },
-  "author": "Profesor08",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/Profesor08/masonry/issues"
   },
   "homepage": "https://github.com/Profesor08/masonry#readme",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
   "devDependencies": {
-    "@types/lodash": "^4.14.172",
-    "typescript": "^4.3.5"
+    "@types/lodash": "^4.17.13",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "~5.6.2",
+    "vite": "^5.4.10"
   },
   "dependencies": {
-    "@prof-dev/event-emitter": "^1.0.3",
-    "@prof-dev/media": "^1.1.1",
     "lodash": "^4.17.21"
   }
 }
