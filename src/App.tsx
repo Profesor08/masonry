@@ -17,6 +17,7 @@ export const App = () => {
   useEffect(() => {
     const masonry =
       gridRef.current !== null ? new Masonry(gridRef.current) : undefined;
+    masonry?.destroy();
 
     return () => {
       masonry?.destroy();
@@ -109,7 +110,16 @@ export const App = () => {
 
       <footer className="bg-gray-800 text-white p-4 mt-6">
         <div className="2xl:container 2xl:mx-auto text-center">
-          <p>&copy; 2024 My Website. All rights reserved.</p>
+          <p>
+            &copy; Developed by{" "}
+            <a
+              className="underline"
+              href="https://github.com/Profesor08"
+              target="_blank"
+            >
+              Profesor08
+            </a>
+          </p>
         </div>
       </footer>
     </>
