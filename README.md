@@ -10,9 +10,9 @@ It supports any `grid-template-columns` configuration and allows flexible use of
 
 ## Installation
 
-````bash
+```bash
 npm i @prof-dev/masonry
-``
+```
 
 ## Example
 
@@ -23,7 +23,7 @@ npm i @prof-dev/masonry
   align-items: start;
   gap: 12px;
 }
-````
+```
 
 ```ts
 const grid = document.querySelector(".masonry-grid");
