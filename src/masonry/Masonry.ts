@@ -15,6 +15,12 @@ export class Masonry {
 
   update = throttle(() => {
     const computedStyle = window.getComputedStyle(this.grid);
+
+    if (computedStyle.getPropertyValue("display").includes("grid") === false) {
+      this.clean();
+      return;
+    }
+
     const { columns } = parseGridTemplateColumns(this.grid);
     const rowGap =
       parseInt(computedStyle.getPropertyValue("row-gap").trim()) || 0;
@@ -52,15 +58,22 @@ export class Masonry {
     });
     this.items = Array.from(this.grid.children) as HTMLElement[];
 
-    this.items.forEach((child) => {
-      this.resizeObserver?.observe(child);
+    this.items.forEach((item) => {
+      this.resizeObserver?.observe(item);
     });
   };
 
   destroy = () => {
     this.resizeObserver?.disconnect();
     this.mutationObserver?.disconnect();
+    this.clean();
     this.items = [];
+  };
+
+  private clean = () => {
+    this.items.forEach((item) => {
+      item.style.removeProperty("margin-top");
+    });
   };
 }
 function parseGridTemplateColumns(grid: Element) {

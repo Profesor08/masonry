@@ -17,7 +17,6 @@ export const App = () => {
   useEffect(() => {
     const masonry =
       gridRef.current !== null ? new Masonry(gridRef.current) : undefined;
-    masonry?.destroy();
 
     return () => {
       masonry?.destroy();
