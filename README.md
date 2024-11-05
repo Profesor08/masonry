@@ -8,6 +8,8 @@ It supports any `grid-template-columns` configuration and allows flexible use of
 
 **Note**: This polyfill does not implement any packing algorithms. The original order of items will be preserved.
 
+[Demo](https://profesor08.github.io/masonry)
+
 ## Installation
 
 ```bash

@@ -16,11 +16,13 @@
   "bugs": {
     "url": "https://github.com/Profesor08/masonry/issues"
   },
-  "homepage": "https://github.com/Profesor08/masonry#readme",
+  "homepage": "https://profesor08.github.io/masonry",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
     "@types/lodash": "^4.17.13",
@@ -29,6 +31,7 @@
     "@types/react-dom": "^18.3.1",
     "@vitejs/plugin-react": "^4.3.3",
     "autoprefixer": "^10.4.20",
+    "gh-pages": "^6.2.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14",
     "typescript": "~5.6.2",
