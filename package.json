@@ -4,8 +4,8 @@
   "author": "Profesor08",
   "license": "ISC",
   "type": "module",
-  "main": "lib/masonry/Masonry.js",
-  "types": "lib/masonry/Masonry.d.ts",
+  "main": "lib/Masonry.js",
+  "types": "lib/Masonry.d.ts",
   "publishConfig": {
     "access": "public"
   },
@@ -19,7 +19,7 @@
   "homepage": "https://profesor08.github.io/masonry",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "rm -rf ./lib && tsc -p tsconfig.build.json && vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
