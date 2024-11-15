@@ -22,6 +22,12 @@ export class Masonry {
     }
 
     const { columns } = parseGridTemplateColumns(this.grid);
+
+    if (columns.length <= 1) {
+      this.clean();
+      return;
+    }
+
     const rowGap =
       parseInt(computedStyle.getPropertyValue("row-gap").trim()) || 0;
 
