@@ -29,7 +29,7 @@ export class Masonry {
     }
 
     const rowGap =
-      parseInt(computedStyle.getPropertyValue("row-gap").trim()) || 0;
+      parseFloat(computedStyle.getPropertyValue("row-gap").trim()) || 0;
 
     for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
       const firstItemInColumn = this.items[columnIndex];
@@ -49,7 +49,10 @@ export class Masonry {
         const nextTop = nextItem.getBoundingClientRect().top;
 
         if (nextTop - rowGap !== prevBottom) {
-          const margin = prevBottom - (nextTop - rowGap);
+          const margin =
+            Math.round(
+              (prevBottom - (nextTop - rowGap) + Number.EPSILON) * 100
+            ) / 100;
 
           nextItem.style.setProperty("margin-top", `${margin}px`);
         }
