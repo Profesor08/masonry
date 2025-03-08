@@ -70,19 +70,6 @@ export class Masonry {
   }
 
   /**
-   * Updates the masonry layout by adjusting item spacing
-   */
-  update(): void {
-    const { columns } = parseGridTemplateColumns(this.grid);
-    const style = window.getComputedStyle(this.grid);
-    if (!style.getPropertyValue('display').includes('grid') || 1 >= columns.length) {
-      return this.clean();
-    }
-    const rowGap = parseFloat(style.getPropertyValue('row-gap')) || 0;
-    this.adjustColumnSpacing(rowGap, columns);
-  }
-
-  /**
    * Sets up observers and populates items from existing grid children
    */
   create(): void {
@@ -105,6 +92,19 @@ export class Masonry {
     this.mutationObserver?.disconnect();
     this.clean();
     this.items = [];
+  }
+
+  /**
+   * Updates the masonry layout by adjusting item spacing
+   */
+  update(): void {
+    const { columns } = parseGridTemplateColumns(this.grid);
+    const style = window.getComputedStyle(this.grid);
+    if (!style.getPropertyValue('display').includes('grid') || 1 >= columns.length) {
+      return this.clean();
+    }
+    const rowGap = parseFloat(style.getPropertyValue('row-gap')) || 0;
+    this.adjustColumnSpacing(rowGap, columns);
   }
 
   /**
