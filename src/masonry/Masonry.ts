@@ -1,5 +1,54 @@
 import throttle from "lodash/throttle";
 
+// Represents a parsed CSS grid column value
+interface CSSValue {
+  type: 'line-name' | 'repeat' | 'minmax' | 'fit-content' | 'keyword' | 'dimension' | 'special' | 'global';
+  value: string;
+}
+
+// Represents the parsed result of grid-template-columns
+interface GridTemplateColumns {
+  type: 'none' | 'track-list';
+  columns: CSSValue[];
+}
+
+// Maps a CSS grid-template-columns value to its type
+const parseCSSValue = (value: string): CSSValue['type'] => {
+  const tests = [
+    { test: /^\[.*\]$/, type: 'line-name' },
+    { test: /^repeat\(.+\)$/, type: 'repeat' },
+    { test: /^minmax\(.+\)$/, type: 'minmax' },
+    { test: /^fit-content\(.+\)$/, type: 'fit-content' },
+    { test: /^(auto|max-content|min-content)$/, type: 'keyword' },
+    { test: /^\d+(?:px|em|rem|%)|\d*\.?\d+fr$/, type: 'dimension' },
+    { test: /^(subgrid|masonry)$/, type: 'special' },
+    { test: /.*/, type: 'global' }
+  ] as const;
+  // Map CSS grid column value to a type (e.g., 'dimension', 'keyword')
+  return tests.find(({ test }) => test.test(value))?.type || 'global';
+};
+
+// Parses the grid-template-columns property of an element
+function parseGridTemplateColumns(grid: HTMLElement): GridTemplateColumns {
+  const columns = window.getComputedStyle(grid)
+    .getPropertyValue('grid-template-columns')
+    .trim();
+  if ('none' === columns) {
+    return {
+      type: 'none',
+      columns: [],
+    };
+  }
+  // Filters out line names to get actual column tracks
+  const parsed = columns.split(/\s(?=(?:[^()]*\([^()]*\))*[^()]*$)/)
+    .map(value => ({ type: parseCSSValue(value), value }))
+    .filter(col => 'line-name' !== col.type);
+  return {
+    type: 'track-list',
+    columns: parsed,
+  };
+}
+
 export class Masonry {
   private resizeObserver?: ResizeObserver;
   private mutationObserver?: MutationObserver;
@@ -83,58 +132,5 @@ export class Masonry {
     this.items.forEach((item) => {
       item.style.removeProperty("margin-top");
     });
-  };
-}
-function parseGridTemplateColumns(grid: Element) {
-  const computedStyle = window.getComputedStyle(grid);
-  const columns = computedStyle
-    .getPropertyValue("grid-template-columns")
-    .trim();
-
-  if (columns === "none") {
-    return { type: "none", columns: [] };
-  }
-
-  const columnEntries = columns
-    .split(/\s(?=(?:[^()]*\([^()]*\))*[^()]*$)/)
-    .map((entry) => {
-      if (/^\[.*\]$/.test(entry)) {
-        // Line name definition
-        return { type: "line-name", value: entry };
-      } else if (/^repeat\(.+\)$/.test(entry)) {
-        // Repeat notation
-        return { type: "repeat", value: entry };
-      } else if (/^minmax\(.+\)$/.test(entry)) {
-        // Minmax notation
-        return { type: "minmax", value: entry };
-      } else if (/^fit-content\(.+\)$/.test(entry)) {
-        // Fit-content notation
-        return { type: "fit-content", value: entry };
-      } else if (
-        entry === "auto" ||
-        entry === "max-content" ||
-        entry === "min-content"
-      ) {
-        // Auto, max-content, min-content keywords
-        return { type: "keyword", value: entry };
-      } else if (
-        /^\d+(px|em|rem|%)$/.test(entry) ||
-        /^\d*\.?\d+fr$/.test(entry)
-      ) {
-        // Lengths, percentages, and flexible (fr) units
-        return { type: "dimension", value: entry };
-      } else if (entry === "subgrid" || entry === "masonry") {
-        // Subgrid or masonry keywords
-        return { type: "special", value: entry };
-      } else {
-        // Global values (inherit, initial, revert, unset)
-        return { type: "global", value: entry };
-      }
-    })
-    .filter(col => 'line-name' !== col.type);
-
-  return {
-    type: "track-list",
-    columns: columnEntries,
   };
 }
