@@ -50,19 +50,29 @@ function parseGridTemplateColumns(grid: HTMLElement): GridTemplateColumns {
 }
 
 export class Masonry {
-  private resizeObserver?: ResizeObserver;
-  private mutationObserver?: MutationObserver;
+  private readonly grid: HTMLElement;
   private items: HTMLElement[] = [];
+  private mutationObserver?: MutationObserver;
+  private resizeObserver?: ResizeObserver;
 
-  constructor(private grid: Element) {
-    if (CSS.supports("grid-template-rows", "masonry") === false) {
-      this.resizeObserver = new ResizeObserver(this.update);
-      this.mutationObserver = new MutationObserver(this.update);
+  /**
+   * Initializes a Masonry layout for a grid element
+   * @param grid - The grid container element
+   */
+  constructor(private grid: HTMLElement) {
+    if (!CSS.supports('grid-template-rows', 'masonry')) {
+      // Throttle updates to handle DOM and resize changes at ~30 FPS for smooth feedback
+      const throttledUpdate = throttle(() => this.update(), 32); // 1000ms / 32 ≈ 31.25 updates per second
+      this.mutationObserver = new MutationObserver(throttledUpdate);
+      this.resizeObserver = new ResizeObserver(throttledUpdate);
       this.create();
     }
   }
 
-  update = throttle(() => {
+  /**
+   * Updates the masonry layout by adjusting item spacing
+   */
+  update(): void {
     const computedStyle = window.getComputedStyle(this.grid);
 
     if (computedStyle.getPropertyValue("display").includes("grid") === false) {
@@ -107,9 +117,12 @@ export class Masonry {
         }
       }
     }
-  }, 32);
+  }
 
-  create = () => {
+  /**
+   * Sets up observers and populates items from existing grid children
+   */
+  create(): void {
     this.destroy();
     this.mutationObserver?.observe(this.grid, {
       childList: true,
@@ -119,18 +132,24 @@ export class Masonry {
     this.items.forEach((item) => {
       this.resizeObserver?.observe(item);
     });
-  };
+  }
 
-  destroy = () => {
+  /**
+   * Disconnects observers and resets the grid layout
+   */
+  destroy(): void {
     this.resizeObserver?.disconnect();
     this.mutationObserver?.disconnect();
     this.clean();
     this.items = [];
-  };
+  }
 
-  private clean = () => {
+  /**
+   * Removes margin-top style property from all grid items
+   */
+  private clean(): void {
     this.items.forEach((item) => {
       item.style.removeProperty("margin-top");
     });
-  };
+  }
 }
