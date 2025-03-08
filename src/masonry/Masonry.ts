@@ -130,7 +130,8 @@ function parseGridTemplateColumns(grid: Element) {
         // Global values (inherit, initial, revert, unset)
         return { type: "global", value: entry };
       }
-    });
+    })
+    .filter(col => 'line-name' !== col.type);
 
   return {
     type: "track-list",
