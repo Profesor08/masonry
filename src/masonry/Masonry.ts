@@ -73,50 +73,13 @@ export class Masonry {
    * Updates the masonry layout by adjusting item spacing
    */
   update(): void {
-    const computedStyle = window.getComputedStyle(this.grid);
-
-    if (computedStyle.getPropertyValue("display").includes("grid") === false) {
-      this.clean();
-      return;
-    }
-
     const { columns } = parseGridTemplateColumns(this.grid);
-
-    if (columns.length <= 1) {
-      this.clean();
-      return;
+    const style = window.getComputedStyle(this.grid);
+    if (!style.getPropertyValue('display').includes('grid') || 1 >= columns.length) {
+      return this.clean();
     }
-
-    const rowGap =
-      parseFloat(computedStyle.getPropertyValue("row-gap").trim()) || 0;
-
-    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-      const firstItemInColumn = this.items[columnIndex];
-
-      firstItemInColumn?.style.removeProperty("margin-top");
-    }
-
-    for (let index = 0; index < this.items.length; index++) {
-      const prevItem = this.items[index - columns.length];
-      const nextItem = this.items[index];
-
-      if (prevItem !== undefined && nextItem !== undefined) {
-        const prevBottom = prevItem.getBoundingClientRect().bottom;
-
-        nextItem.style.removeProperty("margin-top");
-
-        const nextTop = nextItem.getBoundingClientRect().top;
-
-        if (nextTop - rowGap !== prevBottom) {
-          const margin =
-            Math.round(
-              (prevBottom - (nextTop - rowGap) + Number.EPSILON) * 100
-            ) / 100;
-
-          nextItem.style.setProperty("margin-top", `${margin}px`);
-        }
-      }
-    }
+    const rowGap = parseFloat(style.getPropertyValue('row-gap')) || 0;
+    this.adjustColumnSpacing(rowGap, columns);
   }
 
   /**
@@ -142,6 +105,30 @@ export class Masonry {
     this.mutationObserver?.disconnect();
     this.clean();
     this.items = [];
+  }
+
+  /**
+   * Adjusts vertical spacing between grid items based on row gap
+   * @param rowGap - The parsed row gap value in pixels
+   * @param columns - The parsed grid-template-columns configuration
+   */
+  private adjustColumnSpacing(rowGap: number, columns: CSSValue[]): void {
+    // Reset first items in each column
+    this.items.slice(0, columns.length).forEach(item => {
+      item?.style.removeProperty('margin-top');
+    });
+    this.items.forEach((nextItem, index) => {
+      const prevItem = this.items[index - columns.length];
+      if (!prevItem) return;
+      const prevBottom = prevItem.getBoundingClientRect().bottom;
+      nextItem.style.removeProperty('margin-top')
+      const nextTop = nextItem.getBoundingClientRect().top;
+      const gapDiff = prevBottom - (nextTop - rowGap);
+      if (Number.EPSILON < Math.abs(gapDiff)) {
+        const margin = Math.round((gapDiff + Number.EPSILON) * 100) / 100;
+        nextItem.style.setProperty('margin-top', `${margin}px`)
+      }
+    })
   }
 
   /**
