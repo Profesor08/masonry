@@ -1,4 +1,8 @@
-import throttle from "lodash/throttle";
+/**
+ * Polyfill for CSS Grid masonry layout behavior
+ */
+
+import throttle from 'lodash/throttle';
 
 // Represents a parsed CSS grid column value
 interface CSSValue {
@@ -13,7 +17,7 @@ interface GridTemplateColumns {
 }
 
 // Maps a CSS grid-template-columns value to its type
-const parseCSSValue = (value: string): CSSValue['type'] => {
+const parseCSSValue = (value: string): CSSValue => {
   const tests = [
     { test: /^\[.*\]$/, type: 'line-name' },
     { test: /^repeat\(.+\)$/, type: 'repeat' },
@@ -25,7 +29,8 @@ const parseCSSValue = (value: string): CSSValue['type'] => {
     { test: /.*/, type: 'global' }
   ] as const;
   // Map CSS grid column value to a type (e.g., 'dimension', 'keyword')
-  return tests.find(({ test }) => test.test(value))?.type || 'global';
+  const type = tests.find(({ test }) => test.test(value))?.type || 'global';
+  return { type, value }
 };
 
 // Parses the grid-template-columns property of an element
@@ -41,7 +46,7 @@ function parseGridTemplateColumns(grid: HTMLElement): GridTemplateColumns {
   }
   // Filters out line names to get actual column tracks
   const parsed = columns.split(/\s(?=(?:[^()]*\([^()]*\))*[^()]*$)/)
-    .map(value => ({ type: parseCSSValue(value), value }))
+    .map(value => parseCSSValue)
     .filter(col => 'line-name' !== col.type);
   return {
     type: 'track-list',
@@ -50,7 +55,6 @@ function parseGridTemplateColumns(grid: HTMLElement): GridTemplateColumns {
 }
 
 export class Masonry {
-  private readonly grid: HTMLElement;
   private items: HTMLElement[] = [];
   private mutationObserver?: MutationObserver;
   private resizeObserver?: ResizeObserver;
@@ -74,12 +78,13 @@ export class Masonry {
    */
   create(): void {
     this.destroy();
+    // Observe grid children for changes
     this.mutationObserver?.observe(this.grid, {
       childList: true,
     });
+    // Assumes children are HTMLElements, may need adjusting if SVG elements are used as grid items...
     this.items = Array.from(this.grid.children) as HTMLElement[];
-
-    this.items.forEach((item) => {
+    this.items.forEach(item => {
       this.resizeObserver?.observe(item);
     });
   }
@@ -88,8 +93,8 @@ export class Masonry {
    * Disconnects observers and resets the grid layout
    */
   destroy(): void {
-    this.resizeObserver?.disconnect();
     this.mutationObserver?.disconnect();
+    this.resizeObserver?.disconnect();
     this.clean();
     this.items = [];
   }
@@ -103,14 +108,14 @@ export class Masonry {
     if (!style.getPropertyValue('display').includes('grid') || 1 >= columns.length) {
       return this.clean();
     }
-    const rowGap = parseFloat(style.getPropertyValue('row-gap')) || 0;
+    const rowGap = Math.max(0, parseFloat(style.getPropertyValue('row-gap')) || 0);
     this.adjustColumnSpacing(rowGap, columns);
   }
 
   /**
    * Adjusts vertical spacing between grid items based on row gap
-   * @param rowGap - The parsed row gap value in pixels
-   * @param columns - The parsed grid-template-columns configuration
+   * @param rowGap - The vertical gap between rows in pixels (non-negative).
+   * @param columns - The parsed `grid-template-columns` configuration.
    */
   private adjustColumnSpacing(rowGap: number, columns: CSSValue[]): void {
     // Reset first items in each column
@@ -135,8 +140,8 @@ export class Masonry {
    * Removes margin-top style property from all grid items
    */
   private clean(): void {
-    this.items.forEach((item) => {
-      item.style.removeProperty("margin-top");
+    this.items.forEach(item => {
+      item?.style.removeProperty('margin-top');
     });
   }
 }
