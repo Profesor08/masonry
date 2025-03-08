@@ -1,139 +1,147 @@
-import throttle from "lodash/throttle";
+/**
+ * Polyfill for CSS Grid masonry layout behavior
+ */
+
+import throttle from 'lodash/throttle';
+
+// Represents a parsed CSS grid column value
+interface CSSValue {
+  type: 'line-name' | 'repeat' | 'minmax' | 'fit-content' | 'keyword' | 'dimension' | 'special' | 'global';
+  value: string;
+}
+
+// Represents the parsed result of grid-template-columns
+interface GridTemplateColumns {
+  type: 'none' | 'track-list';
+  columns: CSSValue[];
+}
+
+// Maps a CSS grid-template-columns value to its type
+const parseCSSValue = (value: string): CSSValue => {
+  const tests = [
+    { test: /^\[.*\]$/, type: 'line-name' },
+    { test: /^repeat\(.+\)$/, type: 'repeat' },
+    { test: /^minmax\(.+\)$/, type: 'minmax' },
+    { test: /^fit-content\(.+\)$/, type: 'fit-content' },
+    { test: /^(auto|max-content|min-content)$/, type: 'keyword' },
+    { test: /^\d+(?:px|em|rem|%)|\d*\.?\d+fr$/, type: 'dimension' },
+    { test: /^(subgrid|masonry)$/, type: 'special' },
+    { test: /.*/, type: 'global' }
+  ] as const;
+  // Map CSS grid column value to a type (e.g., 'dimension', 'keyword')
+  const type = tests.find(({ test }) => test.test(value))?.type || 'global';
+  return { type, value }
+};
+
+// Parses the grid-template-columns property of an element
+function parseGridTemplateColumns(grid: HTMLElement): GridTemplateColumns {
+  const columns = window.getComputedStyle(grid)
+    .getPropertyValue('grid-template-columns')
+    .trim();
+  if ('none' === columns) {
+    return {
+      type: 'none',
+      columns: [],
+    };
+  }
+  // Filters out line names to get actual column tracks
+  const parsed = columns.split(/\s(?=(?:[^()]*\([^()]*\))*[^()]*$)/)
+    .map(value => parseCSSValue)
+    .filter(col => 'line-name' !== col.type);
+  return {
+    type: 'track-list',
+    columns: parsed,
+  };
+}
 
 export class Masonry {
-  private resizeObserver?: ResizeObserver;
-  private mutationObserver?: MutationObserver;
   private items: HTMLElement[] = [];
+  private mutationObserver?: MutationObserver;
+  private resizeObserver?: ResizeObserver;
 
-  constructor(private grid: Element) {
-    if (CSS.supports("grid-template-rows", "masonry") === false) {
-      this.resizeObserver = new ResizeObserver(this.update);
-      this.mutationObserver = new MutationObserver(this.update);
+  /**
+   * Initializes a Masonry layout for a grid element
+   * @param grid - The grid container element
+   */
+  constructor(private grid: HTMLElement) {
+    if (!CSS.supports('grid-template-rows', 'masonry')) {
+      // Throttle updates to handle DOM and resize changes at ~30 FPS for smooth feedback
+      const throttledUpdate = throttle(() => this.update(), 32); // 1000ms / 32 ≈ 31.25 updates per second
+      this.mutationObserver = new MutationObserver(throttledUpdate);
+      this.resizeObserver = new ResizeObserver(throttledUpdate);
       this.create();
     }
   }
 
-  update = throttle(() => {
-    const computedStyle = window.getComputedStyle(this.grid);
-
-    if (computedStyle.getPropertyValue("display").includes("grid") === false) {
-      this.clean();
-      return;
-    }
-
-    const { columns } = parseGridTemplateColumns(this.grid);
-
-    if (columns.length <= 1) {
-      this.clean();
-      return;
-    }
-
-    const rowGap =
-      parseFloat(computedStyle.getPropertyValue("row-gap").trim()) || 0;
-
-    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-      const firstItemInColumn = this.items[columnIndex];
-
-      firstItemInColumn?.style.removeProperty("margin-top");
-    }
-
-    for (let index = 0; index < this.items.length; index++) {
-      const prevItem = this.items[index - columns.length];
-      const nextItem = this.items[index];
-
-      if (prevItem !== undefined && nextItem !== undefined) {
-        const prevBottom = prevItem.getBoundingClientRect().bottom;
-
-        nextItem.style.removeProperty("margin-top");
-
-        const nextTop = nextItem.getBoundingClientRect().top;
-
-        if (nextTop - rowGap !== prevBottom) {
-          const margin =
-            Math.round(
-              (prevBottom - (nextTop - rowGap) + Number.EPSILON) * 100
-            ) / 100;
-
-          nextItem.style.setProperty("margin-top", `${margin}px`);
-        }
-      }
-    }
-  }, 32);
-
-  create = () => {
+  /**
+   * Sets up observers and populates items from existing grid children
+   */
+  create(): void {
     this.destroy();
+    // Observe grid children for changes
     this.mutationObserver?.observe(this.grid, {
       childList: true,
     });
+    // Assumes children are HTMLElements, may need adjusting if SVG elements are used as grid items...
     this.items = Array.from(this.grid.children) as HTMLElement[];
-
-    this.items.forEach((item) => {
+    this.items.forEach(item => {
       this.resizeObserver?.observe(item);
     });
-  };
-
-  destroy = () => {
-    this.resizeObserver?.disconnect();
-    this.mutationObserver?.disconnect();
-    this.clean();
-    this.items = [];
-  };
-
-  private clean = () => {
-    this.items.forEach((item) => {
-      item.style.removeProperty("margin-top");
-    });
-  };
-}
-function parseGridTemplateColumns(grid: Element) {
-  const computedStyle = window.getComputedStyle(grid);
-  const columns = computedStyle
-    .getPropertyValue("grid-template-columns")
-    .trim();
-
-  if (columns === "none") {
-    return { type: "none", columns: [] };
   }
 
-  const columnEntries = columns
-    .split(/\s(?=(?:[^()]*\([^()]*\))*[^()]*$)/)
-    .map((entry) => {
-      if (/^\[.*\]$/.test(entry)) {
-        // Line name definition
-        return { type: "line-name", value: entry };
-      } else if (/^repeat\(.+\)$/.test(entry)) {
-        // Repeat notation
-        return { type: "repeat", value: entry };
-      } else if (/^minmax\(.+\)$/.test(entry)) {
-        // Minmax notation
-        return { type: "minmax", value: entry };
-      } else if (/^fit-content\(.+\)$/.test(entry)) {
-        // Fit-content notation
-        return { type: "fit-content", value: entry };
-      } else if (
-        entry === "auto" ||
-        entry === "max-content" ||
-        entry === "min-content"
-      ) {
-        // Auto, max-content, min-content keywords
-        return { type: "keyword", value: entry };
-      } else if (
-        /^\d+(px|em|rem|%)$/.test(entry) ||
-        /^\d*\.?\d+fr$/.test(entry)
-      ) {
-        // Lengths, percentages, and flexible (fr) units
-        return { type: "dimension", value: entry };
-      } else if (entry === "subgrid" || entry === "masonry") {
-        // Subgrid or masonry keywords
-        return { type: "special", value: entry };
-      } else {
-        // Global values (inherit, initial, revert, unset)
-        return { type: "global", value: entry };
-      }
-    });
+  /**
+   * Disconnects observers and resets the grid layout
+   */
+  destroy(): void {
+    this.mutationObserver?.disconnect();
+    this.resizeObserver?.disconnect();
+    this.clean();
+    this.items = [];
+  }
 
-  return {
-    type: "track-list",
-    columns: columnEntries,
-  };
+  /**
+   * Updates the masonry layout by adjusting item spacing
+   */
+  update(): void {
+    const { columns } = parseGridTemplateColumns(this.grid);
+    const style = window.getComputedStyle(this.grid);
+    if (!style.getPropertyValue('display').includes('grid') || 1 >= columns.length) {
+      return this.clean();
+    }
+    const rowGap = Math.max(0, parseFloat(style.getPropertyValue('row-gap')) || 0);
+    this.adjustColumnSpacing(rowGap, columns);
+  }
+
+  /**
+   * Adjusts vertical spacing between grid items based on row gap
+   * @param rowGap - The vertical gap between rows in pixels (non-negative).
+   * @param columns - The parsed `grid-template-columns` configuration.
+   */
+  private adjustColumnSpacing(rowGap: number, columns: CSSValue[]): void {
+    // Reset first items in each column
+    this.items.slice(0, columns.length).forEach(item => {
+      item?.style.removeProperty('margin-top');
+    });
+    this.items.forEach((nextItem, index) => {
+      const prevItem = this.items[index - columns.length];
+      if (!prevItem) return;
+      const prevBottom = prevItem.getBoundingClientRect().bottom;
+      nextItem.style.removeProperty('margin-top')
+      const nextTop = nextItem.getBoundingClientRect().top;
+      const gapDiff = prevBottom - (nextTop - rowGap);
+      if (Number.EPSILON < Math.abs(gapDiff)) {
+        const margin = Math.round((gapDiff + Number.EPSILON) * 100) / 100;
+        nextItem.style.setProperty('margin-top', `${margin}px`)
+      }
+    })
+  }
+
+  /**
+   * Removes margin-top style property from all grid items
+   */
+  private clean(): void {
+    this.items.forEach(item => {
+      item?.style.removeProperty('margin-top');
+    });
+  }
 }
