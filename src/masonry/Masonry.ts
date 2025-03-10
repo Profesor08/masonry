@@ -51,7 +51,7 @@ export class Masonry {
         if (nextTop - rowGap !== prevBottom) {
           const margin =
             Math.round(
-              (prevBottom - (nextTop - rowGap) + Number.EPSILON) * 100
+              (prevBottom - (nextTop - rowGap) + Number.EPSILON) * 100,
             ) / 100;
 
           nextItem.style.setProperty("margin-top", `${margin}px`);
