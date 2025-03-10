@@ -30,7 +30,11 @@ export const App = () => {
           Masonry
         </div>
 
-        <a href="https://github.com/Profesor08/masonry" target="_blank">
+        <a
+          href="https://github.com/Profesor08/masonry"
+          target="_blank"
+          rel="noreferrer"
+        >
           <div className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground py-2 h-8 px-2">
             <svg viewBox="0 0 438.549 438.549" className="h-4 w-4">
               <path
@@ -60,7 +64,7 @@ export const App = () => {
                           "inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
                           columns === item &&
                             "bg-secondary text-secondary-foreground",
-                          "hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 w-full justify-start"
+                          "hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2 w-full justify-start",
                         )}
                         onClick={() => setColumns(item)}
                       >
@@ -115,6 +119,7 @@ export const App = () => {
               className="underline"
               href="https://github.com/Profesor08"
               target="_blank"
+              rel="noreferrer"
             >
               Profesor08
             </a>
