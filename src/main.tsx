@@ -5,7 +5,7 @@ import "./main.css";
 
 const grid = document.querySelector(".masonry-grid");
 
-if (grid !== null) {
+if (grid instanceof HTMLElement) {
   new Masonry(grid);
 }
 
