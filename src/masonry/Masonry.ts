@@ -1,17 +1,62 @@
 import throttle from "lodash/throttle";
 
 export class Masonry {
-  private resizeObserver?: ResizeObserver;
-  private mutationObserver?: MutationObserver;
-  private items: HTMLElement[] = [];
+  private mutationObserver: MutationObserver;
+  private resizeObserver: ResizeObserver;
 
   constructor(private grid: Element) {
+    this.mutationObserver = new MutationObserver(this.onContainerMutation);
+    this.resizeObserver = new ResizeObserver(this.onChildrenResize);
+
     if (CSS.supports("grid-template-rows", "masonry") === false) {
-      this.resizeObserver = new ResizeObserver(this.update);
-      this.mutationObserver = new MutationObserver(this.update);
       this.create();
     }
   }
+
+  private create = () => {
+    this.mutationObserver.observe(this.grid, {
+      childList: true,
+    });
+
+    Array.from(this.grid.children).forEach((item) => {
+      this.resizeObserver.observe(item);
+    });
+  };
+
+  private onContainerMutation = (mutations: MutationRecord[]) => {
+    const removedNodes = mutations.flatMap((mutation) =>
+      Array.from(mutation.removedNodes),
+    );
+    const addedNodes = mutations.flatMap((mutation) =>
+      Array.from(mutation.addedNodes),
+    );
+
+    for (const node of removedNodes) {
+      if (node instanceof Element) {
+        this.resizeObserver.unobserve(node);
+      }
+    }
+
+    for (const node of addedNodes) {
+      if (node instanceof Element) {
+        this.resizeObserver.observe(node);
+      }
+    }
+
+    if (removedNodes.length > 0 && addedNodes.length === 0) {
+      this.update();
+    }
+  };
+
+  private onChildrenResize = (entries: ResizeObserverEntry[]) => {
+    const entriesToUpdate = entries.filter(
+      (entry) => entry.target.parentElement !== null,
+    );
+
+    if (entriesToUpdate.length > 0) {
+      this.update();
+    }
+  };
 
   update = throttle(() => {
     const computedStyle = window.getComputedStyle(this.grid);
@@ -21,25 +66,28 @@ export class Masonry {
       return;
     }
 
-    const { columns } = parseGridTemplateColumns(this.grid);
+    const columns = parseGridTemplateColumns(this.grid);
 
     if (columns.length <= 1) {
       this.clean();
+
       return;
     }
 
     const rowGap =
       parseFloat(computedStyle.getPropertyValue("row-gap").trim()) || 0;
 
+    const items = Array.from(this.grid.children) as HTMLElement[];
+
     for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-      const firstItemInColumn = this.items[columnIndex];
+      const firstItemInColumn = items[columnIndex];
 
       firstItemInColumn?.style.removeProperty("margin-top");
     }
 
-    for (let index = 0; index < this.items.length; index++) {
-      const prevItem = this.items[index - columns.length];
-      const nextItem = this.items[index];
+    for (let index = 0; index < items.length; index++) {
+      const prevItem = items[index - columns.length];
+      const nextItem = items[index];
 
       if (prevItem !== undefined && nextItem !== undefined) {
         const prevBottom = prevItem.getBoundingClientRect().bottom;
@@ -60,80 +108,31 @@ export class Masonry {
     }
   }, 32);
 
-  create = () => {
-    this.destroy();
-    this.mutationObserver?.observe(this.grid, {
-      childList: true,
-    });
-    this.items = Array.from(this.grid.children) as HTMLElement[];
-
-    this.items.forEach((item) => {
-      this.resizeObserver?.observe(item);
-    });
-  };
-
   destroy = () => {
-    this.resizeObserver?.disconnect();
-    this.mutationObserver?.disconnect();
+    this.resizeObserver.disconnect();
+    this.mutationObserver.disconnect();
     this.clean();
-    this.items = [];
   };
 
   private clean = () => {
-    this.items.forEach((item) => {
+    (Array.from(this.grid.children) as HTMLElement[]).forEach((item) => {
       item.style.removeProperty("margin-top");
     });
   };
+
+  [Symbol.dispose]() {
+    this.destroy();
+  }
 }
+
 function parseGridTemplateColumns(grid: Element) {
   const computedStyle = window.getComputedStyle(grid);
-  const columns = computedStyle
-    .getPropertyValue("grid-template-columns")
-    .trim();
 
-  if (columns === "none") {
-    return { type: "none", columns: [] };
-  }
+  const gridTemplateColumns = computedStyle.getPropertyValue(
+    "grid-template-columns",
+  );
 
-  const columnEntries = columns
-    .split(/\s(?=(?:[^()]*\([^()]*\))*[^()]*$)/)
-    .map((entry) => {
-      if (/^\[.*\]$/.test(entry)) {
-        // Line name definition
-        return { type: "line-name", value: entry };
-      } else if (/^repeat\(.+\)$/.test(entry)) {
-        // Repeat notation
-        return { type: "repeat", value: entry };
-      } else if (/^minmax\(.+\)$/.test(entry)) {
-        // Minmax notation
-        return { type: "minmax", value: entry };
-      } else if (/^fit-content\(.+\)$/.test(entry)) {
-        // Fit-content notation
-        return { type: "fit-content", value: entry };
-      } else if (
-        entry === "auto" ||
-        entry === "max-content" ||
-        entry === "min-content"
-      ) {
-        // Auto, max-content, min-content keywords
-        return { type: "keyword", value: entry };
-      } else if (
-        /^\d+(px|em|rem|%)$/.test(entry) ||
-        /^\d*\.?\d+fr$/.test(entry)
-      ) {
-        // Lengths, percentages, and flexible (fr) units
-        return { type: "dimension", value: entry };
-      } else if (entry === "subgrid" || entry === "masonry") {
-        // Subgrid or masonry keywords
-        return { type: "special", value: entry };
-      } else {
-        // Global values (inherit, initial, revert, unset)
-        return { type: "global", value: entry };
-      }
-    });
-
-  return {
-    type: "track-list",
-    columns: columnEntries,
-  };
+  return gridTemplateColumns
+    .trim()
+    .split(/\s+(?=(?:[^()]*\([^()]*\))*[^()]*$)/);
 }
